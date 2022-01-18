@@ -1,25 +1,55 @@
-import logo from './logo.svg';
+import { useEffect } from 'react';
+import React from "react";
+import { connect } from 'react-redux'
+import { addToList } from './actions/todo';
 import './App.css';
+import { Button, Form, Card, Input } from 'semantic-ui-react';
 
-function App() {
+const App = (props) => {
+  const { todo, addToList } = props;
+  let textInput = React.createRef();
+
+  useEffect(() => {
+    console.log(todo);
+  }, [todo])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+
+    <>
+      <Form>
+        <Form.Field>
+          <div className="ui input">
+            <input ref={textInput} placeholder='First Name' />
+          </div>
+        </Form.Field>
+      </Form>
+      <Button onClick={() => addToList({ type: textInput.current.value })}>Submit</Button>
+      <br></br>
+
+      {todo.list.map(item => {
+        console.log(item.type, 'ITEM');
+        return (
+          <Card.Group>
+            <Card>
+              <Card.Content>{item.type}</Card.Content>
+            </Card>
+          </Card.Group>
+        )
+      })}
+    </>
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    todo: state.todo
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addToList: (data) => dispatch(addToList(data))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
